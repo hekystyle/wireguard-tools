@@ -450,6 +450,10 @@ static bool process_line(struct config_ctx *ctx, const char *line)
 			ret = parse_key(ctx->device->private_key, value);
 			if (ret)
 				ctx->device->flags |= WGDEVICE_HAS_PRIVATE_KEY;
+		} else if (key_match("PrivateKeyFile")) {
+			ret = parse_keyfile(ctx->device->private_key, value);
+			if (ret)
+				ctx->device->flags |= WGDEVICE_HAS_PRIVATE_KEY;
 		} else
 			goto error;
 	} else if (ctx->is_peer_section) {
@@ -457,6 +461,10 @@ static bool process_line(struct config_ctx *ctx, const char *line)
 			ret = parse_endpoint(&ctx->last_peer->endpoint.addr, value);
 		else if (key_match("PublicKey")) {
 			ret = parse_key(ctx->last_peer->public_key, value);
+			if (ret)
+				ctx->last_peer->flags |= WGPEER_HAS_PUBLIC_KEY;
+		} else if (key_match("PublicKeyFile")) {
+			ret = parse_keyfile(ctx->last_peer->public_key, value);
 			if (ret)
 				ctx->last_peer->flags |= WGPEER_HAS_PUBLIC_KEY;
 		} else if (key_match("AllowedIPs"))
